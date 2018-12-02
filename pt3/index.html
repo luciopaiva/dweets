@@ -43,15 +43,21 @@
         const d = "~ࠈࠈ縀繊䩊䩂~䁀䁀䀀繀䁀䁀<䉂䉂㰀~‐ဠ縀㱂䉂䈼~ሒሲ䰀繀䁀䁀~䉂䉂㰀";
         const blocks="░▉⬤◯⨂〓";
         t/=4
-        const w=c.width=1920>>2;
+        const w=c.width=1920>>3;
+
+        // uncomment to get cool colors
+        // x.fillStyle = "#000";
+        // x.fillRect(0, 0, c.width, c.height);
+        // x.fillStyle = "#0f0";
+
         const nc=74;
         for(let i=8*nc;i--;) {
             const ix=i/8|0;
             const a=(ix/nc)*(Math.PI*2);
             if (C(t+a)>0) continue;
             const iy=i%8;
-            const px=w/2-5+S(t+a)*200;
-            const py=34+iy*30;
+            const px=w/2-5+S(t+a)*100;
+            const py=20+iy*15;
             const ci = d.charCodeAt(i/16) >> i % 16 & 1;
             const ch = "░▉"[ci];
             x.fillText(ch, px, py);
