@@ -40,9 +40,10 @@
     // }
 
     function u(t) {
-        const d = "~ࠈࠈ縀繊䩊䩂~䁀䁀䀀繀䁀䁀<䉂䉂㰀~‐ဠ縀㱂䉂䈼~ሒሲ䰀繀䁀䁀~䉂䉂㰀";
-        const blocks="░▉⬤◯⨂〓";
-        t/=4
+        // if (!window.golfed) return;
+        // const blocks="░▉⬤◯⨂〓";
+
+        const d = "帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~";
         const w=c.width=1920>>3;
 
         // uncomment to get cool colors
@@ -50,13 +51,13 @@
         // x.fillRect(0, 0, c.width, c.height);
         // x.fillStyle = "#0f0";
 
-        const nc=74;
-        for(let i=8*nc;i--;) {
+        const nc=76;
+        for(let i=0;i<8*nc;i++) {
             const ix=i/8|0;
             const a=(ix/nc)*(Math.PI*2);
             if (C(t+a)>0) continue;
-            const iy=i%8;
             const px=w/2-5+S(t+a)*100;
+            const iy=i%8;
             const py=20+iy*15;
             const ci = d.charCodeAt(i/16) >> i % 16 & 1;
             const ch = "░▉"[ci];
@@ -89,18 +90,49 @@
 
 <a href="">See it on dwitter.net</a>
 
-<p>The banner below was generated using <a
+<p>After studying Henri's code, I decided to change it to become some kind of rotating LED display that shows some message.</p>
+
+<p>Here's my initial code, before any golfing:</p>
+
+<pre>
+const d = "帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~";
+const w = c.width = 1920 >> 3;
+
+// uncomment to get cool colors
+// x.fillStyle = "#000";
+// x.fillRect(0, 0, c.width, c.height);
+// x.fillStyle = "#0f0";
+
+const nc=76;
+for(let i=0;i<8*nc;i++) {
+    const ix=i/8|0;
+    const a=(ix/nc)*(Math.PI*2);
+    if (C(t+a)>0) continue;
+    const px=w/2-5+S(t+a)*100;
+    const iy=i%8;
+    const py=20+iy*15;
+    const ci = d.charCodeAt(i/16) >> i % 16 & 1;
+    const ch = "░▉"[ci];
+    x.fillText(ch, px, py);
+}
+</pre>
+
+<h2>The algorithm</h2>
+
+<p>Let's start breaking it into parts. First, there's the data string containing the message to be shown. I'm using the same technique described <a href="https://luciopaiva.com/golfer">here</a> to compress the message into an array of bits.</p>
+
+<p>To make the banner I used <a
         href="http://patorjk.com/software/taag/#p=display&f=Banner&t=hello%20world">this online app</a>:</p>
 
 <pre id="banner">
- #    # ###### #      #       ####     #    #  ####  #####  #      #####
- #    # #      #      #      #    #    #    # #    # #    # #      #    #
- ###### #####  #      #      #    #    #    # #    # #    # #      #    #
- #    # #      #      #      #    #    # ## # #    # #####  #      #    #
- #    # #      #      #      #    #    ##  ## #    # #   #  #      #    #
- #    # ###### ###### ######  ####     #    #  ####  #    # ###### #####</pre>
+ #    # ###### #      #       ####   #    #  ####  #####  #      #####   ##
+ #    # #      #      #      #    #  #    # #    # #    # #      #    #  ##
+ ###### #####  #      #      #    #  #    # #    # #    # #      #    #  ##
+ #    # #      #      #      #    #  # ## # #    # #####  #      #    #  ##
+ #    # #      #      #      #    #  ##  ## #    # #   #  #      #    #
+ #    # ###### ###### ######  ####   #    #  ####  #    # ###### #####   ##</pre>
 
-<p>Let's use the same technique described <a href="https://luciopaiva.com/golfer">here</a> to compress this banner into an array of bits. Check this page's source code to see how I did it. The resulting data is:</p>
+<p>Then I basically got each column of the message and stuffed into one half of a UTF-16 character, bit by bit. Those letters are 6 chars tall, so 1 byte is enough to store a column and we even get 2 extra bits to spare. The message above uses 75 columns. I round it to the next even and, since each UTF-16 character holds 2 columns, I end up with a 38-char data string. Check this page's source code to see how I implemented it. The resulting data is:</p>
 
 <pre id="golfed-banner"></pre>
 
@@ -114,18 +146,75 @@
     for (let j = 0; j < cols; j+=2) {
         let code = 0;
         for (let i = 0; i < 6; i++) {
-            // odd column goes to highest 8 bits
+            // even column goes to highest 8 bits
             code |= (lines[i][j]   === "#" ? 1 : 0) << (i + 1 + 8);
-            // even column goes to lowest 8 bits
+            // odd column goes to lowest 8 bits
             code |= (lines[i][j+1] === "#" ? 1 : 0) << (i + 1);
         }
         let codeStr = code.toString(16);
         codeStr = "0".repeat(4 - codeStr.length) + codeStr;  // left pad with zeros
-        result += `%u${codeStr}`
+        result = `%u${codeStr}` + result
     }
 
-    document.getElementById("golfed-banner").innerText = unescape(result);
+    const golfed = unescape(result);
+    document.getElementById("golfed-banner").innerText = golfed;
 </script>
+
+<p>Next, we have a line setting canvas width. It serves both to set a specific width, but also to clear the canvas. It's a well-known hack that does the same as `x.clearRect(0,0,c.width,c.height), but with less characters. Here I'm using one eighth of the original canvas width, hence the `>> 3` part:</p>
+
+<pre>const w = c.width = 1920 >> 3;</pre>
+
+<p>Then comes the for loop. We'll loop as many times as there are bits in the message (76 columns, each with 8 points):</p>
+
+<pre>
+const nc=76;
+for(let i=0;i<8*nc;i++) {
+</pre>
+
+<p>Now I find out the index of the current column. I do that by performing in integer division by 8, giving me a number between 0 and 75:</p>
+
+<pre>const ix=i/8|0;</pre>
+
+<p>Then I get the current angle of that column with the respect of the rotation of the display:</p>
+
+<pre>const a=(ix/nc)*(Math.PI*2);</pre>
+
+<p>By doing (ix/nc) I map column index to a value in the range [0..1[ and then I multiply it by 2 PI.</p>
+
+<p>Next I do something similar with what Henri did on his code:</p>
+
+<pre>if (C(t+a)>0) continue;</pre>
+
+<p>The difference now is that I cull positive cosines. That has the illusion that the cylinder is rotating clockwise. See, Henri made it rotate counter-clockwise, correctly following the Earth rotation. In my case, however, I want the message to come from right to left, so that's why I needed to invert it.</p>
+
+<p>Now it's time to calculate the x coordinate of the point. Again, this is very similar to what Henri did:</p>
+
+<pre>const px = w/2-5 + S(t+a) * 100;</pre>
+
+<p>I start by adding some constant to center everything horizontally, then I rotate a constant (100) around the y axis to transform a segment into a cylinder.</p>
+
+<p>The y coordinate is even simpler:</p>
+
+<pre>
+const iy=i%8;
+const py=20+iy*15;
+</pre>
+
+<p>I get the remainder of i/8 to serve as my bit index. Bit 0 draws a point in the first row, bit 1 on the second row, and so on, until bit 7 at the bottom row. To calculate py I start by adding a constant that serves as a top margin, then each point gets shifted 15 pixels down times it bit index.</p>
+
+<p>Now, for querying the data:</p>
+
+<pre>
+const ci = d.charCodeAt(i/16) >> i % 16 & 1;
+const ch = "░▉"[ci];
+x.fillText(ch, px, py);
+</pre>
+
+<p>We get the UTF-16 character at position i/16, then we use the remainder of this division to fetch the correct bit. We shift it by that amount and then AND it with 1, to isolate it. The resulting character index (ci) is used to know which block character we'll print to the canvas. Then we finally call fillText() to print it. Phew!</p>
+
+<h2>Let's golf it</h2>
+
+<p>Now it's time to get it messier than it already is.</p>
 
 </body>
 </html>
