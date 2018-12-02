@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dweets</title>
+    <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+<h1>Dweets explained, pt. 3</h1>
+
+<em>by Lucio Paiva (2018-12-02)</em>
+
+<h2>Spread the word around</h2>
+
+<p>In this third part I make my own dweet based on p01's <a href="../pt2/index.html">original idea</a>.</p>
+
+<div class="container">
+    <canvas width="1920" height="1080"></canvas>
+</div>
+
+<script>
+    // this implements all variables defined by dwitter.net for running dweets
+    const c = document.querySelector("canvas");
+    const x = c.getContext("2d");
+    const R = (r, g, b, a) => `rgba(${r},${g},${b},${a})`;
+    const T = Math.tan;
+    const C = Math.cos;
+    const S = Math.sin;
+
+    const update = (t) => {
+        u(t/1000);  // dwitter passes time in seconds!
+        requestAnimationFrame(update);
+    };
+    update(performance.now);
+
+    // replace this with dweet to run
+    // function u(t) {
+    //     for(i=h=c.width=432;i--;)C(t-i)>0&&x.fillText('.⬤'['榁翻꺿듻ퟝ믭󫥤큰삗⢠挎ᩐ肦䰠椉䠊ᑒꊐࢀင'.charCodeAt(i/16)>>i%16&1],192+(i*h-i*i)**.5*S(t-i)/2,i/2+9)
+    // }
+
+    function u(t) {
+        const d = "~ࠈࠈ縀繊䩊䩂~䁀䁀䀀繀䁀䁀<䉂䉂㰀~‐ဠ縀㱂䉂䈼~ሒሲ䰀繀䁀䁀~䉂䉂㰀";
+        const blocks="░▉⬤◯⨂〓";
+        t/=4
+        const w=c.width=1920>>2;
+        const nc=74;
+        for(let i=8*nc;i--;) {
+            const ix=i/8|0;
+            const a=(ix/nc)*(Math.PI*2);
+            if (C(t+a)>0) continue;
+            const iy=i%8;
+            const px=w/2-5+S(t+a)*200;
+            const py=34+iy*30;
+            const ci = d.charCodeAt(i/16) >> i % 16 & 1;
+            const ch = "░▉"[ci];
+            x.fillText(ch, px, py);
+        }
+        // for(i=h=800;i--;)
+        //     C(t-i)>0 &&
+        //     x.fillText('.⬤'['榁翻꺿듻ퟝ믭󫥤큰삗⢠挎ᩐ肦䰠椉䠊ᑒꊐࢀင'.charCodeAt(i/16) >> i % 16 & 1],
+        //         208+120*S(t-i),
+        //         i/2+16)
+    }
+
+    // function u(t) {
+    //     data = '榁翻꺿듻ퟝ믭󫥤큰삗⢠挎ᩐ肦䰠椉䠊ᑒꊐࢀင';
+    //     points = '.⬤'
+    //     h = c.width = 16*24;
+    //     for(i = h-1; i--; ) {
+    //         if (C(t-i) < 0) continue;
+    //         cpos = Math.floor(i / 16);
+    //         bit = data.charCodeAt(cpos) >> i % 16 & 1;
+    //         chr = points[bit];
+    //         px = 16*23/2 + (i * h - i * i) ** .5 * S(t-i) / 2;
+    //         py = i / 2 + 15;
+    //         // x.lineTo(px, py);
+    //         x.fillText(chr, px, py);
+    //     }
+    //     // x.stroke();
+    // }
+</script>
+
+<a href="">See it on dwitter.net</a>
+
+<p>The banner below was generated using <a
+        href="http://patorjk.com/software/taag/#p=display&f=Banner&t=hello%20world">this online app</a>:</p>
+
+<pre id="banner">
+ #    # ###### #      #       ####     #    #  ####  #####  #      #####
+ #    # #      #      #      #    #    #    # #    # #    # #      #    #
+ ###### #####  #      #      #    #    #    # #    # #    # #      #    #
+ #    # #      #      #      #    #    # ## # #    # #####  #      #    #
+ #    # #      #      #      #    #    ##  ## #    # #   #  #      #    #
+ #    # ###### ###### ######  ####     #    #  ####  #    # ###### #####</pre>
+
+<p>Let's use the same technique described <a href="https://luciopaiva.com/golfer">here</a> to compress this banner into an array of bits. Check this page's source code to see how I did it. The resulting data is:</p>
+
+<pre id="golfed-banner"></pre>
+
+<script>
+    const banner = document.getElementById("banner");
+    const lines = banner.innerText.split("\n");
+    if (lines.length !== 6) throw new Error("Must have exactly six lines");
+    const cols = lines.reduce((w, line) => Math.max(w, line.length), 0) + 1;  // +1 to add trailing space
+    if (cols % 2 !== 0) throw new Error("number of columns must be even");
+    let result = "";
+    for (let j = 0; j < cols; j+=2) {
+        let code = 0;
+        for (let i = 0; i < 6; i++) {
+            // odd column goes to highest 8 bits
+            code |= (lines[i][j]   === "#" ? 1 : 0) << (i + 1 + 8);
+            // even column goes to lowest 8 bits
+            code |= (lines[i][j+1] === "#" ? 1 : 0) << (i + 1);
+        }
+        let codeStr = code.toString(16);
+        codeStr = "0".repeat(4 - codeStr.length) + codeStr;  // left pad with zeros
+        result += `%u${codeStr}`
+    }
+
+    document.getElementById("golfed-banner").innerText = unescape(result);
+</script>
+
+</body>
+</html>

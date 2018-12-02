@@ -2,6 +2,9 @@
 body {
     margin: 10px;
 }
+a, a:hover, a:active, a:visited {
+    color: blue;
+}
 pre {
     background-color: #ccc;
     white-space: pre-wrap;
