@@ -34,58 +34,13 @@
     };
     update(performance.now);
 
-    // replace this with dweet to run
-    // function u(t) {
-    //     for(i=h=c.width=432;i--;)C(t-i)>0&&x.fillText('.⬤'['榁翻꺿듻ퟝ믭󫥤큰삗⢠挎ᩐ肦䰠椉䠊ᑒꊐࢀင'.charCodeAt(i/16)>>i%16&1],192+(i*h-i*i)**.5*S(t-i)/2,i/2+9)
-    // }
-
+    // uncomment to get cool colors
+    // x.fillStyle = "#000";
+    // x.fillRect(0, 0, c.width, c.height);
+    // x.fillStyle = "#0f0";
     function u(t) {
-        // if (!window.golfed) return;
-        // const blocks="░▉⬤◯⨂〓";
-
-        const d = "帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~";
-        const w=c.width=1920>>3;
-
-        // uncomment to get cool colors
-        // x.fillStyle = "#000";
-        // x.fillRect(0, 0, c.width, c.height);
-        // x.fillStyle = "#0f0";
-
-        const nc=76;
-        for(let i=0;i<8*nc;i++) {
-            const ix=i/8|0;
-            const a=(ix/nc)*(Math.PI*2);
-            if (C(t+a)>0) continue;
-            const px=w/2-5+S(t+a)*100;
-            const iy=i%8;
-            const py=20+iy*15;
-            const ci = d.charCodeAt(i/16) >> i % 16 & 1;
-            const ch = "░▉"[ci];
-            x.fillText(ch, px, py);
-        }
-        // for(i=h=800;i--;)
-        //     C(t-i)>0 &&
-        //     x.fillText('.⬤'['榁翻꺿듻ퟝ믭󫥤큰삗⢠挎ᩐ肦䰠椉䠊ᑒꊐࢀင'.charCodeAt(i/16) >> i % 16 & 1],
-        //         208+120*S(t-i),
-        //         i/2+16)
+for(i=I=608,c.width=180;a=t+i/I*6.28,i--;)C(a)<0&&x.fillText("░▉"["帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~".charCodeAt(i/16)>>i%16&1],85+S(a)*75,9+i%8*13)
     }
-
-    // function u(t) {
-    //     data = '榁翻꺿듻ퟝ믭󫥤큰삗⢠挎ᩐ肦䰠椉䠊ᑒꊐࢀင';
-    //     points = '.⬤'
-    //     h = c.width = 16*24;
-    //     for(i = h-1; i--; ) {
-    //         if (C(t-i) < 0) continue;
-    //         cpos = Math.floor(i / 16);
-    //         bit = data.charCodeAt(cpos) >> i % 16 & 1;
-    //         chr = points[bit];
-    //         px = 16*23/2 + (i * h - i * i) ** .5 * S(t-i) / 2;
-    //         py = i / 2 + 15;
-    //         // x.lineTo(px, py);
-    //         x.fillText(chr, px, py);
-    //     }
-    //     // x.stroke();
-    // }
 </script>
 
 <a href="">See it on dwitter.net</a>
@@ -214,7 +169,158 @@ x.fillText(ch, px, py);
 
 <h2>Let's golf it</h2>
 
-<p>Now it's time to get it messier than it already is.</p>
+<p>Now it's time to get it messier than it already is. This is my initial code:</p>
+
+<pre>
+const d = "帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~";
+const w = c.width = 1920 >> 3;
+const nc=76;
+for(let i=0;i<8*nc;i++) {
+    const ix=i/8|0;
+    const a=(ix/nc)*(Math.PI*2);
+    if (C(t+a)>0) continue;
+    const px=w/2-5+S(t+a)*100;
+    const iy=i%8;
+    const py=20+iy*15;
+    const ci = d.charCodeAt(i/16) >> i % 16 & 1;
+    const ch = "░▉"[ci];
+    x.fillText(ch, px, py);
+}</pre>
+
+It's 378 chars long, but we don't need consts and lets:
+
+<pre>
+d = "帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~";
+w = c.width = 1920 >> 3;
+nc=76;
+for(i=0;i<8*nc;i++) {
+ix=i/8|0;
+a=(ix/nc)*(Math.PI*2);
+if (C(t+a)>0) continue;
+px=w/2-5+S(t+a)*100;
+iy=i%8;
+py=20+iy*15;
+ci = d.charCodeAt(i/16) >> i % 16 & 1;
+ch = "░▉"[ci];
+x.fillText(ch, px, py);
+}
+</pre>
+
+Down to 278 chars. Cut some variables:
+
+<pre>
+d = "帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~";
+w = c.width = 240;
+nc=76;
+for(i=0;i<8*nc;i++) {
+a=i/8/nc*Math.PI*2;
+if (C(t+a)>0) continue;
+x.fillText("░▉"[d.charCodeAt(i/16) >> i % 16 & 1], w/2-5+S(t+a)*100, 20+i%8*15);
+}
+</pre>
+
+220 chars. Here something interesting happened. I decided to remove the truncation hack (|0) from the column index calculation (ix) and a the display got tilted to the right. I kinda liked it, because it saves me two characters and the final result is interesting, so I'm keeping it, at least for now. Moving on. Let's end with the for block and turn everything into a single statement:
+
+<pre>
+d = "帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~";
+w = c.width = 240;
+nc=76;
+for(i=0;i<8*nc;i++)
+(a=i/8/nc*Math.PI*2) &&
+C(t+a)<0 &&
+x.fillText("░▉"[d.charCodeAt(i/16) >> i % 16 & 1], w/2-5+S(t+a)*100, 20+i%8*15)
+</pre>
+
+<p>207 chars. Move the data inside, remove some spaces:</p>
+
+<pre>
+w=c.width=240;
+nc=76;
+for(i=0;i<8*nc;i++)
+(a=i/8/nc*Math.PI*2) &&
+C(t+a)<0 &&
+x.fillText("░▉"["帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~".charCodeAt(i/16)>>i%16&1],w/2-5+S(t+a)*100,20+i%8*15)
+</pre>
+
+<p>188 chars.</p>
+
+<pre>
+w=c.width=240
+for(i=0;i<608;i++)
+(a=i/8/76*Math.PI*2)&&
+C(t+a)<0&&
+x.fillText("░▉"["帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~".charCodeAt(i/16)>>i%16&1],w/2-5+S(t+a)*100,20+i%8*15)
+</pre>
+
+<p>Getting rid of nc, some spaces and a semicolon I forgot. 177 chars.</p>
+
+<pre>
+w=c.width=240
+for(i=608;i--;)
+(a=i/8/76*Math.PI*2)&&
+C(t+a)<0&&
+x.fillText("░▉"["帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~".charCodeAt(i/16)>>i%16&1],w/2-5+S(t+a)*100,20+i%8*15)
+</pre>
+
+<p>Shorten for loop by merging condition and increment parts and counting down instead of up. 174 chars.</p>
+
+<pre>
+c.width=240
+for(i=608;i--;)
+(a=i/8/76*Math.PI*2)&&
+C(t+a)<0&&
+x.fillText("░▉"["帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~".charCodeAt(i/16)>>i%16&1],115+S(t+a)*100,20+i%8*15)
+</pre>
+
+<p>Got rid of w: 170 chars. I noticed there's a hole in the display, though. It appeared when I changed the for loop to count down. Position zero is never draw because the for now stops as soon as i === 0. Here's the hole:</p>
+
+<img src="hole.png" alt="hole">
+
+<p>To fix it, I just changed 608 to 609. Since that position is an empty space, that's fine. 609 will map outside of the string, returning a NaN. Not a problem, though, because the shift right operation will transform it to zero and everything will be fine. I learned this by finding the bug I mention in the appendix section
+    <a href="../pt2/index.html">here</a>. 170 chars, 30 to go.</p>
+
+<pre>
+c.width=240
+for(i=609;i--;)C(t+(a=i/8/76*Math.PI*2))<0&&x.fillText("░▉"["帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~".charCodeAt(i/16)>>i%16&1],115+S(t+a)*100,20+i%8*15)
+</pre>
+
+Now moved variable a inside the cosine function and got rid of some line breaks, down to 164 chars.
+
+<pre>
+for(i=609,c.width=240;a=i/8/76*Math.PI*2,i--;)C(t+a)<0&&x.fillText("░▉"["帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~".charCodeAt(i/16)>>i%16&1],115+S(t+a)*100,20+i%8*15)
+</pre>
+
+<p>Rearranged it to become a one-liner, but still with 164 chars.</p>
+
+<pre>
+for(i=608,c.width=240;a=i/8/76*6.28,i--;)C(t+a)<0&&x.fillText("░▉"["帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~".charCodeAt(i/16)>>i%16&1],115+S(t+a)*100,20+i%8*15)
+</pre>
+
+<p>Replaced Math.PI * 2 with 6.28, down to 159 chars. I also noticed that something is causing the first point to be drawn twice. I'm not sure what happened and I don't want to stop now, but it means that my hack is not needed anymore, so i starts with 608 again. 159 chars, 19 to go. I need to attack the angle computation:</p>
+
+<pre>a=i/8/76*6.28</pre>
+
+<p>This is screaming for help. To divide by 8 and then by 76 is the same as dividing by 608, our initial value:</p>
+
+<pre>for(i=I=608,c.width=240;a=i/I*6.28,i--;)</pre>
+
+<p>158. We can also pre-sum t into a and avoid the sum occurring twice (for cosine and then sine):</p>
+
+<pre>for(i=I=608,c.width=240;a=t+i/I*6.28,i--;)C(a)<0&&x.fillText("░▉"["帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~".charCodeAt(i/16)>>i%16&1],115+S(a)*100,20+i%8*15)</pre>
+
+<p>156. By shrinking the canvas a bit, I got rid of some digits in decimal numbers:</p>
+
+<pre>for(i=I=608,c.width=180;a=t+i/I*6.28,i--;)C(a)<0&&x.fillText("░▉"["帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~".charCodeAt(i/16)>>i%16&1],85+S(a)*75,9+i%8*13)</pre>
+
+<p>153 chars, 13 to go. This is getting hard. I believe I still can manage to replace I*6.28 with some pre-baked number, but I'm still far from removing 13 chars. I think I chose a message that is too big. 76 columns are just too much information.</p>
+
+<p>Things to try:</p>
+
+<ul>
+    <li>Do not encode top and bottom rows. It would be a potential reduction of 25% in the data, shrinking from 38 down to 29 and I would gain 9 characters. I'm just not sure it will be easy to decode 6 bit columns without requiring more code</li>
+    <li>Shrink the message is the easiest one. Each character takes 7 columns, meaning I can gain 7 bytes for every 2 letters removed. If I remove just 4 letters, I can get rid of 14 bytes, coming to a 139-byte dweet. For instance, if the message was just "DWITTER", it would fit perfectly :-)</li>
+    <li>I also believe it could be possible to avoid culled points altogether, getting rid of the cosine check. I'm not very confident about it, but it's worth looking into it.</li>
+</ul>
 
 </body>
 </html>
