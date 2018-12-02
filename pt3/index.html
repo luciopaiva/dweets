@@ -318,7 +318,7 @@ for(i=608,c.width=240;a=i/8/76*6.28,i--;)C(t+a)<0&&x.fillText("░▉"["帀^㰀�
 
 <ul>
     <li>Do not encode top and bottom rows. It would be a potential reduction of 25% in the data, shrinking from 38 down to 29 and I would gain 9 characters. I'm just not sure it will be easy to decode 6 bit columns without requiring more code</li>
-    <li>Shrink the message is the easiest one. Each character takes 7 columns, meaning I can gain 7 bytes for every 2 letters removed. If I remove just 4 letters, I can get rid of 14 bytes, coming to a 139-byte dweet. For instance, if the message was just "DWITTER", it would fit perfectly :-)</li>
+    <li>Shrink the message is the easiest one. Each character takes 7 columns, meaning I can gain 7 bytes for every 2 letters removed. If I remove just 4 letters, I can get rid of 14 bytes, coming to a 139-byte dweet. For instance, if the message was just "DWITTER", it would fit perfectly :-) For comparison, Henri's data was 24 chars long. DWITTER would require 7*7=50 columns, 25 chars</li>
     <li>I also believe it could be possible to avoid culled points altogether, getting rid of the cosine check. I'm not very confident about it, but it's worth looking into it.</li>
 </ul>
 
