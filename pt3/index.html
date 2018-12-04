@@ -34,18 +34,14 @@
     };
     update(performance.now);
 
-    // uncomment to get cool colors
-    // x.fillStyle = "#000";
-    // x.fillRect(0, 0, c.width, c.height);
-    // x.fillStyle = "#0f0";
     function u(t) {
-for(i=I=608,c.width=180;a=t+i/I*6.28,i--;)C(a)<0&&x.fillText("░▉"["帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~".charCodeAt(i/16)>>i%16&1],85+S(a)*75,9+i%8*13)
+for(i=I=416,c.width=180;a=t+i/I*6.28,i--;)C(a)<0&&x.fillText("░▉"["㉌ሒ縒䈀䩊䩊~ȂɾȂɾ~⁾တ縠㰀䉂䉂~".charCodeAt(i/16)>>i%16&1],85+S(a)*75,9+i%8*13)
     }
 </script>
 
 <a href="">See it on dwitter.net</a>
 
-<p>After studying Henri's code, I decided to change it to become some kind of rotating LED display that shows some message.</p>
+<p>After studying Henri's code, I decided to change it to make some kind of rotating LED display showing some message.</p>
 
 <p>Here's my initial code, before any golfing:</p>
 
@@ -87,35 +83,11 @@ for(let i=0;i<8*nc;i++) {
  #    # #      #      #      #    #  ##  ## #    # #   #  #      #    #
  #    # ###### ###### ######  ####   #    #  ####  #    # ###### #####   ##</pre>
 
-<p>Then I basically got each column of the message and stuffed into one half of a UTF-16 character, bit by bit. Those letters are 6 chars tall, so 1 byte is enough to store a column and we even get 2 extra bits to spare. The message above uses 75 columns. I round it to the next even and, since each UTF-16 character holds 2 columns, I end up with a 38-char data string. Check this page's source code to see how I implemented it. The resulting data is:</p>
+<p>Then I basically got each column of the message and stuffed into one half of a UTF-16 character, bit by bit. Those letters are 6 chars tall, so 1 byte is enough to store a column and we even get 2 extra bits to spare. The message above uses 75 columns. I round it to the next even and, since each UTF-16 character holds 2 columns, I end up with a 38-char data string. Check this page's source code to see how I implemented it (it's at the very bottom of the page source). The resulting data is:</p>
 
 <pre id="golfed-banner"></pre>
 
-<script>
-    const banner = document.getElementById("banner");
-    const lines = banner.innerText.split("\n");
-    if (lines.length !== 6) throw new Error("Must have exactly six lines");
-    const cols = lines.reduce((w, line) => Math.max(w, line.length), 0) + 1;  // +1 to add trailing space
-    if (cols % 2 !== 0) throw new Error("number of columns must be even");
-    let result = "";
-    for (let j = 0; j < cols; j+=2) {
-        let code = 0;
-        for (let i = 0; i < 6; i++) {
-            // even column goes to highest 8 bits
-            code |= (lines[i][j]   === "#" ? 1 : 0) << (i + 1 + 8);
-            // odd column goes to lowest 8 bits
-            code |= (lines[i][j+1] === "#" ? 1 : 0) << (i + 1);
-        }
-        let codeStr = code.toString(16);
-        codeStr = "0".repeat(4 - codeStr.length) + codeStr;  // left pad with zeros
-        result = `%u${codeStr}` + result
-    }
-
-    const golfed = unescape(result);
-    document.getElementById("golfed-banner").innerText = golfed;
-</script>
-
-<p>Next, we have a line setting canvas width. It serves both to set a specific width, but also to clear the canvas. It's a well-known hack that does the same as `x.clearRect(0,0,c.width,c.height), but with less characters. Here I'm using one eighth of the original canvas width, hence the `>> 3` part:</p>
+<p>Next, we have a line setting the canvas width. It serves both to set a specific width, but also to clear the canvas. It's a well-known hack that does the same as `x.clearRect(0,0,c.width,c.height), but with less characters. Here I'm using one eighth of the original canvas width, hence the `>> 3` part:</p>
 
 <pre>const w = c.width = 1920 >> 3;</pre>
 
@@ -136,17 +108,17 @@ for(let i=0;i<8*nc;i++) {
 
 <p>By doing (ix/nc) I map column index to a value in the range [0..1[ and then I multiply it by 2 PI.</p>
 
-<p>Next I do something similar with what Henri did on his code:</p>
+<p>Next I do something similar to what Henri did on his code:</p>
 
 <pre>if (C(t+a)>0) continue;</pre>
 
-<p>The difference now is that I cull positive cosines. That has the illusion that the cylinder is rotating clockwise. See, Henri made it rotate counter-clockwise, correctly following the Earth rotation. In my case, however, I want the message to come from right to left, so that's why I needed to invert it.</p>
+<p>The difference now is that I cull positive cosine values. That gives the illusion that the cylinder is rotating clockwise. See, Henri made it rotate counter-clockwise, correctly following the Earth rotation. In my case, however, I want the message to come from right to left, so that's why I inverted it.</p>
 
 <p>Now it's time to calculate the x coordinate of the point. Again, this is very similar to what Henri did:</p>
 
 <pre>const px = w/2-5 + S(t+a) * 100;</pre>
 
-<p>I start by adding some constant to center everything horizontally, then I rotate a constant (100) around the y axis to transform a segment into a cylinder.</p>
+<p>I start by adding a constant to center everything horizontally, then I rotate a vertical line (x=100) around the y axis, transforming it into a cylinder.</p>
 
 <p>The y coordinate is even simpler:</p>
 
@@ -165,7 +137,7 @@ const ch = "░▉"[ci];
 x.fillText(ch, px, py);
 </pre>
 
-<p>We get the UTF-16 character at position i/16, then we use the remainder of this division to fetch the correct bit. We shift it by that amount and then AND it with 1, to isolate it. The resulting character index (ci) is used to know which block character we'll print to the canvas. Then we finally call fillText() to print it. Phew!</p>
+<p>I get the UTF-16 character at position i/16, then I use the remainder of this division to fetch the correct bit. I shift it by that amount and then AND it with 1, to isolate it. The resulting character index (ci) is used to know which block character we'll print to the canvas. Then I finally call fillText() to print it. Phew!</p>
 
 <h2>Let's golf it</h2>
 
@@ -272,22 +244,17 @@ C(t+a)<0&&
 x.fillText("░▉"["帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~".charCodeAt(i/16)>>i%16&1],115+S(t+a)*100,20+i%8*15)
 </pre>
 
-<p>Got rid of w: 170 chars. I noticed there's a hole in the display, though. It appeared when I changed the for loop to count down. Position zero is never draw because the for now stops as soon as i === 0. Here's the hole:</p>
-
-<img src="hole.png" alt="hole">
-
-<p>To fix it, I just changed 608 to 609. Since that position is an empty space, that's fine. 609 will map outside of the string, returning a NaN. Not a problem, though, because the shift right operation will transform it to zero and everything will be fine. I learned this by finding the bug I mention in the appendix section
-    <a href="../pt2/index.html">here</a>. 170 chars, 30 to go.</p>
+<p>Got rid of w: down to 170 chars.</p>
 
 <pre>
 c.width=240
-for(i=609;i--;)C(t+(a=i/8/76*Math.PI*2))<0&&x.fillText("░▉"["帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~".charCodeAt(i/16)>>i%16&1],115+S(t+a)*100,20+i%8*15)
+for(i=608;i--;)C(t+(a=i/8/76*Math.PI*2))<0&&x.fillText("░▉"["帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~".charCodeAt(i/16)>>i%16&1],115+S(t+a)*100,20+i%8*15)
 </pre>
 
 Now moved variable a inside the cosine function and got rid of some line breaks, down to 164 chars.
 
 <pre>
-for(i=609,c.width=240;a=i/8/76*Math.PI*2,i--;)C(t+a)<0&&x.fillText("░▉"["帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~".charCodeAt(i/16)>>i%16&1],115+S(t+a)*100,20+i%8*15)
+for(i=608,c.width=240;a=i/8/76*Math.PI*2,i--;)C(t+a)<0&&x.fillText("░▉"["帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~".charCodeAt(i/16)>>i%16&1],115+S(t+a)*100,20+i%8*15)
 </pre>
 
 <p>Rearranged it to become a one-liner, but still with 164 chars.</p>
@@ -296,7 +263,7 @@ for(i=609,c.width=240;a=i/8/76*Math.PI*2,i--;)C(t+a)<0&&x.fillText("░▉"["帀
 for(i=608,c.width=240;a=i/8/76*6.28,i--;)C(t+a)<0&&x.fillText("░▉"["帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~".charCodeAt(i/16)>>i%16&1],115+S(t+a)*100,20+i%8*15)
 </pre>
 
-<p>Replaced Math.PI * 2 with 6.28, down to 159 chars. I also noticed that something is causing the first point to be drawn twice. I'm not sure what happened and I don't want to stop now, but it means that my hack is not needed anymore, so i starts with 608 again. 159 chars, 19 to go. I need to attack the angle computation:</p>
+<p>Replaced Math.PI * 2 with 6.28. Down to 159 chars, 19 to go. I need to attack the computation of the angle:</p>
 
 <pre>a=i/8/76*6.28</pre>
 
@@ -312,15 +279,53 @@ for(i=608,c.width=240;a=i/8/76*6.28,i--;)C(t+a)<0&&x.fillText("░▉"["帀^㰀�
 
 <pre>for(i=I=608,c.width=180;a=t+i/I*6.28,i--;)C(a)<0&&x.fillText("░▉"["帀^㰀䉂䉂~䁀䁀繀䰀ሲሒ~䈼䉂㱂縀ဠ‐~㰀䉂䉂<䁀䁀繀䀀䁀䁀~䩂䩊繊縀ࠈࠈ~".charCodeAt(i/16)>>i%16&1],85+S(a)*75,9+i%8*13)</pre>
 
-<p>153 chars, 13 to go. This is getting hard. I believe I still can manage to replace I*6.28 with some pre-baked number, but I'm still far from removing 13 chars. I think I chose a message that is too big. 76 columns are just too much information.</p>
+<p>153 chars, 13 to go. This is getting hard. I believe I still can manage to replace I*6.28 with some pre-baked number, but I'm still far from removing 13 chars. I think I chose a message that is too big. 76 columns are just too much information. For comparison, Henri's data was 24 chars long. My "HELLO WORLD!" message is 38 columns wide. If I changed it to, say, "DWITTER", it would require 7*7=50 columns, 25 chars, fitting nicely. Here's the new message:</p>
 
-<p>Things to try:</p>
+<pre id="banner-new">
+ #####  #    # # ##### ##### ###### #####
+ #    # #    # #   #     #   #      #    #
+ #    # #    # #   #     #   #####  #    #
+ #    # # ## # #   #     #   #      #####
+ #    # ##  ## #   #     #   #      #   #
+ #####  #    # #   #     #   ###### #    # </pre>
 
-<ul>
-    <li>Do not encode top and bottom rows. It would be a potential reduction of 25% in the data, shrinking from 38 down to 29 and I would gain 9 characters. I'm just not sure it will be easy to decode 6 bit columns without requiring more code</li>
-    <li>Shrink the message is the easiest one. Each character takes 7 columns, meaning I can gain 7 bytes for every 2 letters removed. If I remove just 4 letters, I can get rid of 14 bytes, coming to a 139-byte dweet. For instance, if the message was just "DWITTER", it would fit perfectly :-) For comparison, Henri's data was 24 chars long. DWITTER would require 7*7=50 columns, 25 chars</li>
-    <li>I also believe it could be possible to avoid culled points altogether, getting rid of the cosine check. I'm not very confident about it, but it's worth looking into it.</li>
-</ul>
+<p>Which encodes to:</p>
+
+<pre id="golfed-banner-new"></pre>
+
+<p>And this concludes the task with 136 chars:</p>
+
+<pre>for(i=I=416,c.width=180;a=t+i/I*6.28,i--;)C(a)<0&&x.fillText("░▉"["㉌ሒ縒䈀䩊䩊~ȂɾȂɾ~⁾တ縠㰀䉂䉂~".charCodeAt(i/16)>>i%16&1],85+S(a)*75,9+i%8*13)</pre>
+
+<p>Thanks for reading and see you in the next part!</p>
+
+<script>
+    function generateData(input, output) {
+        const banner = document.getElementById(input);
+        const lines = banner.innerText.split("\n");
+        if (lines.length !== 6) throw new Error("Must have exactly six lines");
+        const cols = lines.reduce((w, line) => Math.max(w, line.length), 0) + 1;  // +1 to add trailing space
+        if (cols % 2 !== 0) throw new Error("number of columns must be even");
+        let result = "";
+        for (let j = 0; j < cols; j+=2) {
+            let code = 0;
+            for (let i = 0; i < 6; i++) {
+                // even column goes to highest 8 bits
+                code |= (lines[i][j]   === "#" ? 1 : 0) << (i + 1 + 8);
+                // odd column goes to lowest 8 bits
+                code |= (lines[i][j+1] === "#" ? 1 : 0) << (i + 1);
+            }
+            let codeStr = code.toString(16);
+            codeStr = "0".repeat(4 - codeStr.length) + codeStr;  // left pad with zeros
+            result = `%u${codeStr}` + result
+        }
+
+        document.getElementById(output).innerText = unescape(result);
+    }
+
+    generateData("banner", "golfed-banner");
+    generateData("banner-new", "golfed-banner-new");
+</script>
 
 </body>
 </html>
