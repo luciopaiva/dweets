@@ -1,22 +1,50 @@
 
 body {
     margin: 10px;
+    padding: 0 0 50px 0;
+    font-size: 16px;
+    line-height: 1.2em;
 }
 a, a:hover, a:active, a:visited {
     color: blue;
 }
 pre {
     background-color: #ccc;
-    white-space: pre-wrap;
+    /*white-space: pre-wrap;*/
     padding: 10px;
+    overflow-x: auto;
 }
 canvas {
     width: 100%;
     background: white;
 }
 .container {
-    width: 568px;
     height: 320px;
     border: 1px solid black;
     overflow: hidden;
+}
+
+.container-legend {
+    margin-top: 5px;
+}
+
+.container, .container-legend {
+    width: 100%;
+    max-width: 568px;
+}
+
+@media screen and (min-width: 568px) {
+    .container {
+        margin: auto;
+    }
+    .container-legend {
+        margin: 5px auto;
+    }
+}
+
+@media screen and (min-width: 1000px) {
+    body {
+        margin: auto;
+        width: 960px;
+    }
 }

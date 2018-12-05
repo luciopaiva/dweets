@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="Dweets explained, pt. 2: And the world goes round">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=yes">
     <title>Dweets</title>
     <link rel="stylesheet" href="../index.css">
 </head>
@@ -11,12 +13,17 @@
 
 <em>by Lucio Paiva (2018-12-02)</em>
 
+<p>You may want to read <a href="../pt1">part 1</a> first, where I give a brief introduction to what a dweet is.</p>
+
 <h2>p01's "AND THE WORLD GOES ROUND 🌏🌍🌎"</h2>
 
-<p>In this first hands-on part, I'm going to show you how this Mathieu Henri's (aka p01) dweet work:</p>
+<p>In this first part, I'm going to show you how this Mathieu Henri's (aka p01) dweet was made:</p>
 
 <div class="container">
     <canvas width="1920" height="1080"></canvas>
+</div>
+<div class="container-legend">
+    <a href="https://www.dwitter.net/d/5600">See it on dwitter.net</a>
 </div>
 
 <script>
@@ -40,7 +47,7 @@
     }
 </script>
 
-<a href="https://www.dwitter.net/d/5600">See it on dwitter.net</a>
+<p>Here's the code:</p>
 
 <pre>
 function u(t) {
@@ -67,18 +74,20 @@ function u(t) {
 }
 </pre>
 
-Let's start by understanding what are those strange characters in `data`. It was a clever way p01 found to compress world map points into a unicode string. Each unicode character holds 16 bits (UTF-16). Since his points are either land or sea, one bit per point is enough. His string has 24 characters, meaning there's a total of 24*16=384 points.
+<p>Let's start by understanding what are those strange characters in `data`. It was a clever way p01 used to compress world map points into a unicode string. Each unicode character holds 16 bits (UTF-16). Since his points are either land or sea, one bit per point is enough. His data string has 24 characters, meaning there's a total of 24*16=384 points. The for loop will iterate through all of them, projecting them to the screen by using math.</p>
+
+<p>Allow me to skip a few lines for now and jump to this one:</p>
 
 <pre>cpos = Math.floor(i / 16)</pre>
 
-To determine which character to pick, he does `i / 16`, which basically makes it jump to the next character every 16 iterations. Here I am explicitly converting i/16 to int by flooring it, but that's exactly what charCodeAt() does when it receives a float number.
+He wants to access a specific character in the string. To determine which character to pick, he does `i / 16`, which basically makes it jump to the next character every 16 iterations of the for loop. Here I am explicitly converting i/16 to int by flooring it, but that's exactly what charCodeAt() does when it receives a float number.
 
 <pre>data.charCodeAt(cpos) >> i % 16 & 1</pre>
 
-<p>Having picked a character, he shifts its code `i % 16` bits right to access the actual bit. Finally, a bitwise AND with 1 will isolate that pixel from the rest, returning either 0 (sea) or 1 (land). To understand more about how those strange characters decode into real data, check my other article
+<p>Having picked a character, he shifts its char code `i % 16` bits right to access the actual bit. Finally, a bitwise AND with 1 will isolate that pixel from the rest, returning either 0 (sea) or 1 (land). To understand more about how those strange characters decode into real data, check my other article
     <a href="https://luciopaiva.com/golfer">here</a>.</p>
 
-<p>Now comes the math part. For each point picked, we have to project into onto a sphere and then map it to the screen. Golfed math can be a bit difficult to understand, so why not start by plotting it?</p>
+<p>Now comes the math part. For each point picked, we have to project it onto a sphere and then map it to the screen. Golf math can be a bit difficult to understand, so why not start by plotting it?</p>
 
 <img src="x-plot.png" alt="x plot">
 <p>See it live <a
@@ -86,19 +95,19 @@ To determine which character to pick, he does `i / 16`, which basically makes it
 
 <p>Notes:</p>
 <ul>
-    <li>the plot is rotated 90 degrees counter-clockwise, so the south pole is at the right extreme</li>
-    <li>I removed t from the function. Its only purpose in the code is to make the Earth spin (try removing it from the code)</li>
+    <li>Wolfram plot is rotated 90 degrees counter-clockwise, so the south pole is at the right extreme</li>
+    <li>I removed t from the function. Its only purpose in the code is to make the Earth spin (try removing it from the code and see that the Earth will show up as a static image)</li>
 </ul>
 
 <p>The x coordinate is mapped by zig-zagging through all the points, starting at the south pole and "peeling" the Earth as if it was an orange. Before we delve into the equation for the x coordinate, let's go back to the first statement in the for loop:</p>
 
 <pre>if (C(t-i) > 0) continue;</pre>
 
-<p>Now that we talked about peeling the Earth surface, this comes into play. We don't want to plot points on the opposite side of the globe. , so that they're not shown. It does that by checking the cosine of the point; if it is negative, cull it.</p>
+<p>Now that we talked about peeling the Earth surface, this comes into play. We don't want to plot points on the opposite side of the globe. That condition does that by checking the cosine of the point; if it is negative, cull it.</p>
 
 <p>Ok, back to the equation for the x coordinate. We need to break it into parts.</p>
 
-<p>First part is the easier one: 192. It's just a constant to center everything horizontally. All x points points will be shifted right this amount in pixels. Try setting it to zero to see how Earth's vertical axis shifts and snaps to the left border of the canvas.</p>
+<p>First part is the easier one: 192. It's just a constant to center everything horizontally. All x points points will be shifted right by this amount in pixels. Try setting it to zero to see how Earth's vertical axis shifts and snaps to the left border of the canvas.</p>
 
 <p>Second part is</p>
 
@@ -116,7 +125,7 @@ It's just a more concise (less chars) way to write
 
 <img src="arc.png" alt="arc">
 
-<p>Again, this is rotated 90 degrees counter-clockwise. Another way to see it is as the parametric equation of a circle, in the form r^2 = x^2 + y^2. Since we're only inputting positive values for i (or x in the plot), only the positive half of the circle is drawn. We need an extra bit to make it a sphere.</p>
+<p>Again, Wolfram plot is rotated 90 degrees counter-clockwise. Another way to see it is as the parametric equation of a circle, in the form r^2 = x^2 + y^2. Since we're only inputting positive values for i (or x in the plot), only the positive half of the circle is drawn. We need an extra bit to make it a sphere.</p>
 
 <p>That's where the third part comes to help:</p>
 
@@ -132,7 +141,7 @@ It's just a more concise (less chars) way to write
 
 <p>Besides multiplying by Math.sin(), the third part also divides everything by two. This is just to change the amplitude of the function, bringing it from a maximum of Math.sqrt(216*432 - 216**2)=216 down to 108 and adjusting it to fit the canvas.</p>
 
-<p>Ok, having completely dissected the x coordinate, the y is much easier:</p>
+<p>Ok, having completely dissected the x coordinate, the y coordinate is much easier:</p>
 
 <pre>py = i / 2 + 9;</pre>
 
@@ -144,6 +153,8 @@ It's just a more concise (less chars) way to write
 
 <p>And then time t comes to increment the rotation angle at every new frame, making the Earth rotate. Amazing piece of art :-)</p>
 
+<p>If you feel like it, continue to <a href="../pt3">part 3</a> where I implement my own (first) dweet and reveal every step involved in making and golfing it.</p>
+
 <h2>Appendix</h2>
 
 <p>While studying his code, I think I found a bug. Instead of a width of 432, I think he meant to use 383. See, 432 is 16 * 27, but it so happens that his data array has only 24 positions. When i is 432:</p>
@@ -153,9 +164,11 @@ It's just a more concise (less chars) way to write
     data.charCodeAt(cpos);  // invalid position 27!
 </pre>
 
-<p>charCodeAt() will return NaN. It turns out that (NaN >> some amount) evaluates to zero, so the code still works; it's just probably not what Henri wanted.</p>
+<p>charCodeAt() will return NaN. It turns out that (NaN >> some amount) evaluates to zero, so the code still works -- it's just probably not what Henri wanted -- 383 makes more sense. It is 16*24-1, making the first 16 iterations of i correctly hit the 23rd character, then the next will pick the 22nd and so on.</p>
 
-<p>383 makes more sense. It is 16*24-1, making the first 16 iterations of i correctly hit the 23rd character, then the next will pick the 22nd and so on.</p>
+<hr>
 
+Writen by <a href="https://luciopaiva.com" target="_blank">Lucio Paiva</a><br>
+2018-12-02
 </body>
 </html>

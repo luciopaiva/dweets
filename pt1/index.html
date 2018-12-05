@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="Dweets explained, pt. 1: What is a dweet?">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=yes">
     <title>Dweets explained, pt. 1: what is a dweet?</title>
     <link rel="stylesheet" href="../index.css">
 </head>
@@ -9,20 +11,83 @@
 
 <h1>Dweets explained, pt. 1</h1>
 
+<em>by Lucio Paiva (2018-12-04)</em>
+
 <h2>What is a dweet?</h2>
 
-<!-- ToDo explain what is creative coding -->
 <p>To understand what a dweet is, you first have to know about creative coding and code golfing.</p>
 
-<p>Creative coding is about <em>programming art</em>. It usually involves some kind of output where the final art can be appreciated. It can be the HTML canvas (using either 2d or webgl), but nothing prevents you from trying any other kind of output. Not just in the HTML/Javascript realm (using svg, divs, tables, etc), but also via native applications coded in C or any other language, really.</p>
+<p><b>Creative coding</b> is about making art with code. It usually involves some kind of output where the final art can be appreciated. In Javascript this output is usually the HTML canvas (using either 2d or webgl), but nothing prevents you from trying any other kind of media. And not just in the HTML/Javascript realm (using svg, divs, tables, etc), but also via native applications coded in C or any other language, really.</p>
 
-<p>My recent introduction to creative coding started with this cool guy named Daniel Shiffman, a professor at the NYU teaching programming to artists. He has </p>
-<!-- then Mathieu Henri -->
+<p>I was introduced to creative coding by this cool fella named Daniel Shiffman, professor at NYU's Tisch School of the Arts. He has a YouTube channel called
+    <a href="https://www.youtube.com/user/shiffman">The Coding Train</a> in which he teaches all kinds of cool visual stuff. I am one of his
+    <a href="https://www.patreon.com/codingtrain" target="_blank">patrons</a>, by the way.</p>
 
-<!-- ToDo explain what is code golfing - demo scene -->
-<!-- ToDo explain what variables are exposed in Dwitter -->
-<!-- ToDo show some examples -->
-<!-- ToDo point to next part -->
+<p><b>Code golfing</b> is the art of implementing some algorithm with the shortest source code possible, usually by abusing the language in some way. Here's one example:</p>
+
+<div class="container">
+    <canvas width="1920" height="1080"></canvas>
+</div>
+<div class="container-legend">
+    <a href="https://www.dwitter.net/d/6376">See it on dwitter.net</a>
+</div>
+
+<script>
+    // this implements all variables defined by dwitter.net for running dweets
+    const c = document.querySelector("canvas");
+    const x = c.getContext("2d");
+    const R = (r, g, b, a) => `rgba(${r},${g},${b},${a})`;
+    const T = Math.tan;
+    const C = Math.cos;
+    const S = Math.sin;
+
+    const update = (t) => {
+        u(t/1000);  // dwitter passes time in seconds!
+        requestAnimationFrame(update);
+    };
+    update(performance.now);
+
+    // replace this with dweet to run
+    function u(t) {
+        c.width|=z=4+C(t);r=89;f=a=>x.lineTo(250*z+r*C(q=a-S(t+a)/3)*z,99*S(2*t)+r*z*(1+S(q)));f(0);f(1.3);f(2);f(2.5);f(0);f(2);r=99;f(2);x.fill()
+    }
+</script>
+
+<p>And this is the code that makes it happen:</p>
+
+<pre>
+c.width|=z=4+C(t);r=89;f=a=>x.lineTo(250*z+r*C(q=a-S(t+a)/3)*z,99*S(2*t)+r*z*(1+S(q)));f(0);f(1.3);f(2);f(2.5);f(0);f(2);r=99;f(2);x.fill()
+</pre>
+
+<p>Mind-blowing, isn't it?</p>
+
+<p>My introduction to code golfing came with <a href="https://www.youtube.com/results?search_query=mathieu+henri" target="_blank">Mathieu Henri's talks</a>, with whom I learned that the demoscene is still alive and kicking, and now there's people doing cool stuff in Javascript as well.</p>
+
+<p>Demoscene? This is the name given to an artistic subculture movement focused on creating <b>demos</b>, small pieces of code to generate cool audiovisual presentations. It's something that started decades ago. I was always surprised and intrigued as to how such amazing stuff was created. Now with the canvas and specially with WebGL, making demos became something much more accessible, although producing good pieces of art will be always a challenge that few will able to tackle.</p>
+
+<p><a href="https://dwitter.net" target="_blank">Dwitter</a> is a social platform for sharing Javascript art. The cool part is that you are constrained to only 140 characters. Some say that imposing limits to art makes everything much easier, since you stay focused on simpler ideas, and the simplest things are generally the most beautiful.</p>
+
+<p>But how that tiny piece of code can produce art in a canvas? It seems so cryptic! Well, you don't start with nothing. Dwitter provides you with basic variables to help you stay focused. Those are:</p>
+
+<pre>
+c = document.querySelector("canvas");
+x = c.getContext("2d");
+R = (r, g, b, a) => `rgba(${r},${g},${b},${a})`;
+T = Math.tan;
+C = Math.cos;
+S = Math.sin;
+</pre>
+
+<p><b>c</b> is a reference to the canvas. It's 1920x1080 by the default. <b>x</b> is the 2D context of that canvas. <b>R</b> is a function to convert RGBA data to string. <b>T</b>, <b>C</b> and <b>S</b> are shortcuts to Math.tan, Math.cos and Math.sin, respectively. Finally there's this function <b>u(t)</b> which is called 60 times per second, where <b>t</b> is time in seconds since the animation started.</p>
+
+<p>Enough with introductions. Let's see some code. I invite you to continue to part 2, where I dissect one of Mathieu Henri's coolest dweets.</p>
+
+<p><a href="../pt2">Go to part 2</a></p>
+
+<hr>
+
+Writen by <a href="https://luciopaiva.com" target="_blank">Lucio Paiva</a><br>
+2018-12-04
 
 </body>
 </html>
