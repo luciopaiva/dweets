@@ -4,6 +4,8 @@ body {
     padding: 0 0 50px 0;
     font-size: 16px;
     line-height: 1.2em;
+    font-family: sans-serif;
+    text-align: justify;
 }
 a, a:hover, a:active, a:visited {
     color: blue;
@@ -23,9 +25,12 @@ img {
 }
 
 .container {
+    margin-top: 20px;
     height: calc(54vw);
-    border: 1px solid #878787;
+    border-radius: 3px;
+    box-shadow: 0 0 3px gray;
     overflow: hidden;
+    max-height: 320px;
 }
 
 .container-legend {
@@ -50,10 +55,11 @@ img {
 @media screen and (min-width: 568px) {
     img {
         width: auto;
+        margin: auto;
+        display: block;
     }
     .container {
-        margin: auto;
-        height: 320px;
+        margin: 20px auto 0 auto;
     }
     .container-legend {
         margin: 5px auto;
