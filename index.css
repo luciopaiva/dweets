@@ -21,6 +21,7 @@ canvas {
 img {
     width: 100%;
 }
+
 .container {
     height: calc(54vw);
     border: 1px solid #878787;
@@ -34,6 +35,16 @@ img {
 .container, .container-legend {
     width: 100%;
     max-width: 568px;
+}
+
+.pagination {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.pagination > * {
+
 }
 
 @media screen and (min-width: 568px) {
